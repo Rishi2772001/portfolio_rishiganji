@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Michroma&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-michroma: "Michroma", sans-serif; 
+}
+
+@theme {
+  --font-krona-one: "Krona One", sans-serif; 
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+.glow-hover {
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.glow-hover:hover {
+  /* text colour itself */
+  color: #3ab9ff;           /* bright blue */
+
+  /* surrounding glow */
+  text-shadow:
+    0 0 6px  rgba( 58,185,255,0.9),   /* tight halo */
+    0 0 12px rgba( 58,185,255,0.7),   /* mid glow */
+    0 0 18px rgba( 58,185,255,0.5);   /* soft outer haze */
+}
