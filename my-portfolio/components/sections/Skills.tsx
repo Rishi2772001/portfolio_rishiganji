@@ -8,11 +8,10 @@ import { Observer } from "gsap/Observer";
 import { motion } from "framer-motion";
 import { EASE } from "@/lib/easing";
 
-// register both plugins up-front
 gsap.registerPlugin(ScrollTrigger, Observer);
 
 /* ------------------------------------------------------------------ */
-/* 1.  Data                                                            */
+/* 1 . Data                                                            */
 /* ------------------------------------------------------------------ */
 type Section = { heading: string; items: string[] };
 type Card    = { title: string; sections: Section[] };
@@ -28,49 +27,40 @@ const skillCards: Card[] = [
       { heading: "Databases & Storage", items: ["MongoDB", "MySQL", "Redis", "Firebase"] },
       {
         heading: "Mobile / Deployment Tooling",
-        items: ["Flutter", "Android & iOS deployment", "ASGI (Async SGI)", "Real-time messaging"],
+        items: ["Flutter", "Android & iOS", "ASGI (Async)", "Real‑time messaging"],
       },
     ],
   },
   {
     title: "Frameworks & Libraries",
     sections: [
-      { heading: "Frontend", items: ["React (+ Next.js)", "Bootstrap"] },
-      {
-        heading: "Backend / Full-stack",
-        items: ["Node.js", "Express", "FastAPI", "Django (+ Channels)", "PHP / CodeIgniter"],
-      },
-      { heading: "API Technologies", items: ["GraphQL", "REST", "WebSockets", "AJAX Polling"] },
+      { heading: "Frontend",             items: ["React (+ Next)", "Bootstrap"] },
+      { heading: "Backend / Full‑stack", items: ["Node.js", "Express", "FastAPI", "Django", "PHP / CI"] },
+      { heading: "API",                  items: ["GraphQL", "REST", "WebSockets", "AJAX"] },
     ],
   },
   {
     title: "Testing & Quality",
     sections: [
-      { heading: "Test Runners", items: ["Cypress", "Supertest", "PyTest"] },
-      { heading: "Methodologies", items: ["Unit / Integration", "End-to-End", "Load / Stress"] },
+      { heading: "Runners",       items: ["Cypress", "Supertest", "PyTest"] },
+      { heading: "Methodologies", items: ["Unit", "Integration", "E2E", "Load"] },
     ],
   },
   {
-    title: "Core CS Concepts",
+    title: "Core CS Concepts",
     sections: [
-      { heading: "Algorithms & DS", items: ["DSA fundamentals"] },
+      { heading: "Algorithms & DS", items: ["DSA fundamentals"] },
       {
-        heading: "Systems & Architecture",
-        items: ["DBMS (SQL & NoSQL)", "Operating Systems", "System design", "Async programming", "OOP"],
+        heading: "Systems",
+        items: ["SQL & NoSQL", "OS", "System design", "Async", "OOP"],
       },
     ],
   },
   {
     title: "Soft Skills",
     sections: [
-      {
-        heading: "Interpersonal & Collaborative Skills",
-        items: ["Communication", "Collaboration", "Accountability", "Teamwork", "Problem Solving"],
-      },
-      {
-        heading: "Personal Excellence & Growth",
-        items: ["Time Management", "Attention to Detail", "Continuous Improvement", "Reliability", "Growth Mindset"],
-      },
+      { heading: "Collaboration", items: ["Communication", "Teamwork", "Accountability"] },
+      { heading: "Personal",      items: ["Time Mgmt", "Detail‑oriented", "Growth Mindset"] },
     ],
   },
 ];
@@ -84,14 +74,20 @@ const cardGradients = [
   "linear-gradient(45deg,#654ea3 0%,#eaafc8 50%,#f9d423 100%)",
 ];
 
-/* ---------- 2. Component ------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* 2 . Component                                                       */
+/* ------------------------------------------------------------------ */
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
-
+  const navOffset = (() => {
+     if (typeof window === 'undefined') return 0;
+     const header = document.querySelector<HTMLElement>('header');
+     return header ? header.offsetHeight + 16 : 96;   // fallback 96 px
+   })();
+   
+   
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
-
-    // capture a handle so we can kill it on unmount
     let slowScroll: Observer | null = null;
 
     const ctx = gsap.context(() => {
@@ -100,12 +96,11 @@ export default function Skills() {
       const slides    = gsap.utils.toArray<HTMLDivElement>(".skills-slide");
       const n         = listItems.length;
 
-      /* timeline with longer distance → “slower” feel */
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionEl,
-          start: "top top",
-          end: () => `+=${(n - 1) * 60}vh`, // 60 vh per slide (was 30)
+          start: `top+=${navOffset} top`,
+          end:   () => `+=${(n - 1) * 60}vh`,
           pin: true,
           pinSpacing: false,
           scrub: 1,
@@ -113,52 +108,43 @@ export default function Skills() {
       });
 
       slides.forEach(s => gsap.set(s, { autoAlpha: 0, y: 30 }));
-      gsap.set(slides[0],   { autoAlpha: 1, y: 0 });
-      gsap.set(listItems[0],{ color: "#000" });
+      gsap.set(slides[0], { autoAlpha: 1, y: 0 });
+      gsap.set(listItems[0], { color: "#000" });
 
       listItems.forEach((item, i) => {
         if (i === 0) return;
-        tl.set(item, { color: "#000" }, i)
-          .to(slides[i],     { autoAlpha: 1, y: 0,  duration: 0.35, ease: "power2.out" }, i)
+        tl.set(item,           { color: "#000"    }, i)
+          .to(slides[i],       { autoAlpha: 1, y: 0,  duration: 0.35, ease: "power2.out" }, i)
           .set(listItems[i-1], { color: "#008080" }, i)
-          .to(slides[i-1],   { autoAlpha: 0, y: -30, duration: 0.35, ease: "power2.in"  }, i);
+          .to(slides[i-1],     { autoAlpha: 0, y: -30, duration: 0.35, ease: "power2.in"  }, i);
       });
 
-      /* -------------------------------------------------------------
-         SLOW-DOWN OBSERVER
-         ------------------------------------------------------------- */
       ScrollTrigger.create({
         trigger: sectionEl,
         start:  "top top",
         end:    "bottom center+=15%",
-        onEnter() {                          // entering the pinned zone
+        onEnter() {
           slowScroll = Observer.create({
             target: window,
             type: "wheel,touch",
             preventDefault: true,
-            onChange(self) {
-              // scale delta → 0.3  (70 % slower than normal)
-              window.scrollBy(0, self.deltaY * 0.1);
-            },
+            onChange(self) { window.scrollBy(0, self.deltaY * 0.1); },
           });
         },
-        onLeave() { slowScroll?.kill(); slowScroll = null; },
+        onLeave()     { slowScroll?.kill(); slowScroll = null; },
         onLeaveBack() { slowScroll?.kill(); slowScroll = null; },
       });
     }, sectionRef);
 
-    /* cleanup */
-    return () => {
-      slowScroll?.kill();
-      ctx.revert();
-    };
+    return () => { slowScroll?.kill(); ctx.revert(); };
   }, []);
 
   return (
-    <section 
+    <section
       id="skills"
       ref={sectionRef}
-      className="skills-section relative z-[10] w-full min-h-screen rounded-2xl bg-[#f5f5f7]"
+      className="skills-section relative z-[10] w-full min-h-screen rounded-2xl bg-[#ffffff]"
+      style={{ scrollMarginTop: navOffset, paddingTop: navOffset }}
     >
       {/* header */}
       <div className="mx-auto max-w-7xl px-6 py-10">
@@ -166,48 +152,56 @@ export default function Skills() {
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }}
           viewport={{ once: true, amount: 0.3 }}
-          className="mb-12 w-full text-center font-krona-one text-9xl"
+          className="mb-12 w-full text-center font-krona-one
+                     text-6xl sm:text-8xl lg:text-9xl"
         >
           SKILLS
         </motion.h2>
       </div>
 
-      {/* two-column content */}
-      <div className="mx-auto flex max-w-7xl px-6 pb-10">
-        {/* left list */}
-        <div className="relative flex w-1/3 flex-col">
+      {/* layout: stack on mobile, columns on sm+ */}
+      <div className="mx-auto flex flex-col sm:flex-row max-w-7xl px-6 pb-10">
+        {/* list */}
+        <div className="relative flex w-full sm:w-1/3 flex-col">
           <div className="skills-fill absolute left-0 top-0 h-full w-1 bg-teal-600" />
-          <ul className="skills-list ml-4 flex flex-col gap-8 font-michroma">
-            {skillCards.map(c => (
-              <li key={c.title} className="text-2xl font-semibold text-[#008080]">
-                {c.title}
+          <ul className="skills-list ml-4 flex flex-col gap-6 sm:gap-8 font-michroma">
+            {skillCards.map(card => (
+              <li key={card.title} className="text-xl sm:text-2xl font-semibold text-[#008080]">
+                {card.title}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* right slides */}
-        <div className="relative ml-8 flex flex-1">
+        {/* slides */}
+        <div className="relative flex flex-1 mt-8 sm:mt-0 ml-0 sm:ml-8">
           {skillCards.map((card, idx) => {
             const cols =
-              card.sections.length === 1 ? "md:grid-cols-1 justify-center"
-              : card.sections.length === 2 ? "md:grid-cols-2 justify-center"
-              : "md:grid-cols-3";
+              card.sections.length === 1
+                ? "md:grid-cols-1 justify-center"
+                : card.sections.length === 2
+                ? "md:grid-cols-2 justify-center"
+                : "md:grid-cols-3";
 
             return (
               <div
                 key={card.title}
                 style={{ background: cardGradients[idx] }}
-                className={`skills-slide absolute inset-0 min-h-fit grid grid-cols-1 ${cols} gap-8 rounded-xl p-8 shadow-lg`}
+                className={`skills-slide absolute inset-0 grid grid-cols-1 ${cols}
+                            gap-4 sm:gap-8 rounded-xl
+                            p-4 sm:p-8
+                            min-h-[180px] max-h-[180px] overflow-y-auto   /* 📱 scrollable on phones */
+                            sm:min-h-fit sm:max-h-none sm:overflow-visible
+                            shadow-lg`}
               >
                 {card.sections.map(sec => (
                   <div key={sec.heading || card.title}>
                     {sec.heading && (
-                      <h4 className="mb-2 text-lg font-semibold text-gray-700 font-michroma">
+                      <h4 className="mb-1 sm:mb-2 text-sm sm:text-lg font-semibold text-gray-700 font-michroma">
                         {sec.heading}
                       </h4>
                     )}
-                    <ul className="list-none space-y-1 text-gray-800 font-michroma">
+                    <ul className="list-none space-y-0.5 sm:space-y-1 text-[10px] sm:text-base text-gray-800 font-michroma">
                       {sec.items.map(item => <li key={item}>{item}</li>)}
                     </ul>
                   </div>

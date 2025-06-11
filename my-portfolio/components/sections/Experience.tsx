@@ -21,7 +21,7 @@ const experiences = [
     bullets: [
       "Delivered production-ready features, built APIs, and integrated payment gateways.",
       "Automated scholarship awards, saving ops 80+ hours per month.",
-      "Implemented auth & testing, mentored interns — boosting velocity and cutting bugs 30 %.",
+      "Implemented auth & testing, mentored interns — boosting velocity and cutting bugs 30 %.",
     ],
   },
   {
@@ -29,7 +29,7 @@ const experiences = [
     subtitle: "Anurag Group of Institutions | May 2021 – May 2022",
     bullets: [
       "Led front-end classes covering HTML, CSS, JavaScript, and security fundamentals.",
-      "Created course material focused on software-engineering principles & architecture.",
+      "Created course material focused on software‑engineering principles & architecture.",
       "Evaluated student projects for quality and reliability in a collaborative environment.",
     ],
   },
@@ -43,9 +43,8 @@ export default function Experience() {
     if (!expRef.current) return;
 
     const ctx = gsap.context(() => {
-      /* slide-in + fade for each card (no parallax / pin) */
       gsap.utils.toArray<HTMLElement>(".exp-card").forEach((card, i) => {
-        const fromX = i % 2 === 0 ? -120 : 120; // left / right
+        const fromX = i % 2 === 0 ? -120 : 120;
         gsap.from(card, {
           x: fromX,
           y: FADE_UP,
@@ -54,7 +53,7 @@ export default function Experience() {
           scrollTrigger: {
             trigger: card,
             start: "top 85%",
-            end: "top 65%",
+            end:   "top 65%",
             scrub: true,
           },
         });
@@ -65,29 +64,21 @@ export default function Experience() {
   }, []);
 
   return (
-    <section
-      ref={expRef}
-      id="experience"
-      className="relative w-full bg-white"
-    >
-      <div className="mx-auto max-w-5xl px-6 pt-80 pb-20">
+    <section ref={expRef} id="experience" className="relative w-full bg-[#f5f5f7]">
+      <div className="mx-auto max-w-5xl px-6 pt-80 pb-20 overflow-x-hidden sm:overflow-visible">
         {/* heading */}
         <motion.h2
           initial={{ opacity: 0, y: 60 }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.6, ease: EASE },
-          }}
+          whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }}
           viewport={{ once: true, amount: 0.3 }}
-          className="mb-12 text-center font-krona-one text-9xl"
+          className="mb-12 text-center font-krona-one whitespace-nowrap text-5xl sm:text-7xl lg:text-9xl"   
         >
           Experience
         </motion.h2>
 
         {/* cards */}
         <div className="grid gap-10 md:grid-cols-2">
-          {experiences.map((exp) => (
+          {experiences.map(exp => (
             <MultilayerCardV_2 key={exp.title}>
               <CardBody
                 className={cn("exp-card h-full")}
@@ -115,11 +106,9 @@ function CardBody({ className, title, subtitle, bullets }: CardBodyProps) {
   return (
     <div className={cn(className, "text-gray-100")}>
       <h3 className="mb-1 font-michroma text-xl font-bold">{title}</h3>
-      <p className="mb-4 font-michroma text-sm font-medium opacity-70">
-        {subtitle}
-      </p>
+      <p className="mb-4 font-michroma text-sm font-medium opacity-70">{subtitle}</p>
       <ul className="list-disc space-y-2 pl-4 font-michroma">
-        {bullets.map((b) => (
+        {bullets.map(b => (
           <li key={b}>{b}</li>
         ))}
       </ul>
