@@ -77,16 +77,19 @@ export default function Experience() {
         </motion.h2>
 
         {/* cards */}
-        <div className="grid gap-10 md:grid-cols-2">
-          {experiences.map(exp => (
-            <MultilayerCardV_2 key={exp.title}>
-              <CardBody
-                className={cn("exp-card h-full")}
-                title={exp.title}
-                subtitle={exp.subtitle}
-                bullets={exp.bullets}
-              />
-            </MultilayerCardV_2>
+        <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
+          {experiences.map((exp) => (
+            <div key={exp.title} className="w-full">
+              <MultilayerCardV_2>
+                <CardBody
+                  /* remove h-full so height hugs content */
+                  className="exp-card px-4 py-5 sm:px-6 sm:py-6"
+                  title={exp.title}
+                  subtitle={exp.subtitle}
+                  bullets={exp.bullets}
+                />
+              </MultilayerCardV_2>
+            </div>
           ))}
         </div>
       </div>
@@ -94,23 +97,16 @@ export default function Experience() {
   );
 }
 
-/* ---------------- card inner content ---------------- */
-type CardBodyProps = {
-  className?: string;
-  title: string;
-  subtitle: string;
-  bullets: string[];
-};
+/* ---------------- inner content ---------------- */
+type CardBodyProps = { className?: string; title: string; subtitle: string; bullets: string[] };
 
 function CardBody({ className, title, subtitle, bullets }: CardBodyProps) {
   return (
-    <div className={cn(className, "text-gray-100")}>
-      <h3 className="mb-1 font-michroma text-xl font-bold">{title}</h3>
-      <p className="mb-4 font-michroma text-sm font-medium opacity-70">{subtitle}</p>
-      <ul className="list-disc space-y-2 pl-4 font-michroma">
-        {bullets.map(b => (
-          <li key={b}>{b}</li>
-        ))}
+    <div className={cn(className, 'text-gray-100')}>
+      <h3 className="mb-1 font-michroma text-lg sm:text-xl font-bold">{title}</h3>
+      <p  className="mb-3 font-michroma text-xs sm:text-sm font-medium opacity-70">{subtitle}</p>
+      <ul className="list-disc space-y-1 sm:space-y-2 pl-4 font-michroma text-xs sm:text-sm leading-snug">
+        {bullets.map((b) => <li key={b}>{b}</li>)}
       </ul>
     </div>
   );
